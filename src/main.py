@@ -74,6 +74,43 @@ def get_users():
 
     return jsonify(response_body), 200
 
+@app.route('/user', methods=['POST'])
+def post_member():
+    new_user = request.get_json()
+    users = user.add_user(new_user)
+    response_body = {
+        "added new user": new_user
+    }
+    return jsonify(response_body), 200
+
+# no ID for post method: must create separate end points for post & delete
+# @app.route('/vital/<int:id>', methods=["POST", "DELETE"])
+
+# @app.route('/medication/<int:id>', methods=["POST", "DELETE"])
+
+# @app.route('/symptom/<int:id>', methods=["POST", "DELETE"])
+# def change_user(id):
+#     request_body = request.get_json()
+#     if request_body is None or request_body == {}:
+#         raise APIException("Empty Body", status_code=404)
+#     if request.method == "POST":
+#         new_planet = Favorite(entity_name=request_body['entity_name'], entity_type="planet", entity_id=id, username=request_body['username'])
+#         db.session.add(new_planet)
+#         db.session.commit()
+#     if request.method == 'DELETE':
+#         deleted_planet = Favorite.query.filter_by(username=request_body["username"], entity_type="planet", entity_id=id).first()
+#         if deleted_planet is None:
+#             raise APIException("User Not Found", status_code=404)
+#         db.session.delete(deleted_planet)
+#         db.session.commit()
+#     favorites = Favorite.query.filter_by(username=request_body['username'])
+#     all_favorites = list(map(lambda x: x.serialize(), favorites))
+#     response_body = {
+#         "Favorites": all_favorites
+#     }
+
+#     return jsonify(response_body), 200 
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

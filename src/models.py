@@ -5,10 +5,12 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    vitals = db.relationship('Vital', backref='user', lazy=True)
-
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    fullname = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(200), unique=True, nullable=False)
+    address =  db.Column(db.String(200), unique=True, nullable=False)
+    vitals = db.relationship('Vital', backref='user')
 
     def __repr__(self):
         return '<User %r,%r,%r>' % (self.id, self.username, self.email)
@@ -18,28 +20,136 @@ class User(db.Model):
             "id": self.id,
             "username": self.username,
             "email": self.email,
+            "fullname": self.fullname,
+            "phone": self.phone,
+            "address": self.address
             # "favorites": [favorite.serialize() for favorite in self.favorites]
             # do not serialize the password, its a security breach
         }
 
 class Vital(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    vitalname = db.Column(db.String(200), unique=False, nullable=False)	
+    date = db.Column(db.String(200), unique=True, nullable=False)	
+    value = db.Column(db.String(200), unique=True, nullable=False)		
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
 
+# { date: "2021-07-31", id: 0, value: 65.25, vitalName: "Heart Rate" },
+
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r>' % (self.id, self.entity_type, self.entity_name, self.entity_id,  self.username, self.username)
+        return '<Favorite %r,%r,%r,%r,%r>' % (self.id, self.vitalname, self.date, self.value, self.username)
 
     def serialize(self):
         return {
             "id": self.id,
-            # "username": self.username,
             "username": self.username,
-
+            "vitalname": self.vitalname,
+            "date": self.date,
+            "value": self.value
             # do not serialize the password, its a security breach
         }
 
-# class Symptom(db.Model):
+class Medication(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=False)	
+    dose = db.Column(db.String(120), unique=True, nullable=False)	
+    frequency = db.Column(db.String(120), unique=True, nullable=False)		
+    reason = db.Column(db.String(120), unique=True, nullable=False)	
+    side_effects = db.Column(db.String(120), unique=True, nullable=False)	
+    username = db.Column(db.String(20), db.ForeignKey('user.username'))
+
+# {	id: 1357,	name: "Aspirin",	dose: "a lot",  frequency: "too often", reason: "for fun", sideEffects: "madness and death" },
+
+    def __repr__(self):
+        return '<Favorite %r,%r,%r,%r,%r,%r,%r>' % (self.id, self.username, self.name, self.dose, self.frequency, self.reason, self.side_effects)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "name": self.name,
+            "dose": self.dose,
+            "frequency": self.frequency,
+            "reason": self.reason,
+            "side_effects": self.side_effects
+        }
+
+class Symptom(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    symptomName = db.Column(db.String(120), unique=False, nullable=False)	
+    startDate = db.Column(db.String(200), unique=True, nullable=False)	
+    severity = db.Column(db.Integer, unique=True, nullable=False)		
+    location = db.Column(db.String(60), unique=True, nullable=False)	
+    frequency = db.Column(db.String(120), unique=True, nullable=False)	
+    symptom_note = db.relationship('SymptomNote', backref='symptom')
+    # vitals = db.relationship('Vital', backref='user')
+    username = db.Column(db.String(20), db.ForeignKey('user.username'))
+
+# { id: 123124, symptomName: "broken butt", startDate: "07/12/21", severity: "10", location: "butt", frequency: "constant", duration: "all day", notes: [] }
 
 
-# class Medicine(db.Model):
+    def __repr__(self):
+        return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.symptomName, self.startDate, self.startDate,self.severity, self.location, self.frequency, self.symptom_notes, self.username)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "symptomName": self.symptomName,
+            "startDate": self.startDate,
+            "severity": self.severity,
+            "location": self.location,
+            "frequency": self.frequency,
+            "symptom_notes": self.symptom_notes
+        }
+
+class SymptomNote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(200), unique=True, nullable=False)	
+    symptom_id = db.Column(db.Integer, db.ForeignKey('symptom.id'))
+    note = db.Column(db.String(500), unique=False, nullable=False)	
+
+# { date: "2021-07-31", id: 0, value: 65.25, vitalName: "Heart Rate" },
+
+    def __repr__(self):
+        return '<Favorite %r,%r,%r,%r,%r>' % (self.id,  self.date, self.symptom, self.note,)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "date": self.date,
+            "symptom": self.symptom,
+            # "username": self.username,
+            "note": self.note
+            # do not serialize the password, its a security breach
+        }
+
+
+
+
+class NextVisit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(200), unique=True, nullable=False)	
+    time = db.Column(db.String(200), unique=True, nullable=False)	
+    doctorName = db.Column(db.String(200), unique=True, nullable=False)
+    # symptoms = db.relationship('symptomnote', backref='symptom')
+    # meds = db.relationship('symptomnote', backref='symptom')
+    # vitals = db.relationship('symptomnote', backref='symptom')
+    username = db.Column(db.String(20), db.ForeignKey('user.username'))
+
+# id: store.allVisits.length, doctor: doctorName, date: date, time: time, symptoms: sympList, meds: medList, vitals: vitalList
+
+    def __repr__(self):
+        return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.date, self.time, self.doctorName,self.symptoms, self.meds, self.vitals, self.username)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "date": self.date,
+            "time": self.time,
+            "doctorName": self.doctorName,
+            "symptoms": self.symptoms,
+            "meds": self.meds,
+            "vitals": self.vitals,
+            "username": self.username
+        }
