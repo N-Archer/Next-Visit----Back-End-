@@ -29,7 +29,7 @@ class User(db.Model):
 
 class Vital(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    vitalname = db.Column(db.String(200), unique=False, nullable=False)	
+    vital_name = db.Column(db.String(200), unique=False, nullable=False)	
     date = db.Column(db.String(200), unique=True, nullable=False)	
     value = db.Column(db.String(200), unique=True, nullable=False)		
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
@@ -37,13 +37,13 @@ class Vital(db.Model):
 # { date: "2021-07-31", id: 0, value: 65.25, vitalName: "Heart Rate" },
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r>' % (self.id, self.vitalname, self.date, self.value, self.username)
+        return '<Favorite %r,%r,%r,%r,%r>' % (self.id, self.vital_name, self.date, self.value, self.username)
 
     def serialize(self):
         return {
             "id": self.id,
             "username": self.username,
-            "vitalname": self.vitalname,
+            "vital_name": self.vital_name,
             "date": self.date,
             "value": self.value
             # do not serialize the password, its a security breach

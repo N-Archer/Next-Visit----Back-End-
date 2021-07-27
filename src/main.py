@@ -83,8 +83,26 @@ def post_member():
     }
     return jsonify(response_body), 200
 
+
+@app.route('/vital', methods=["POST"])
+def add_vital():
+    new_vital = Vital(vital_name=request_body['vital_name'], date=request_body['date'], value=request_body['value'], id=request_body[id], username=request_body['username'])
+    db.session.add(new_vital)
+    db.session.commit()
+
+    response_body = {
+        "new_vital": new_vital
+    }
+    return jsonify(response_body), 200 
+
+    # id = db.Column(db.Integer, primary_key=True)
+    # vitalname = db.Column(db.String(200), unique=False, nullable=False)	
+    # date = db.Column(db.String(200), unique=True, nullable=False)	
+    # value = db.Column(db.String(200), unique=True, nullable=False)		
+    # username = db.Column(db.String(20), db.ForeignKey('user.username'))
+
 # no ID for post method: must create separate end points for post & delete
-# @app.route('/vital/<int:id>', methods=["POST", "DELETE"])
+# @app.route('/vital/<int:id>', methods=[ "DELETE" ])
 
 # @app.route('/medication/<int:id>', methods=["POST", "DELETE"])
 
