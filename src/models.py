@@ -30,8 +30,8 @@ class User(db.Model):
 class Vital(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     vital_name = db.Column(db.String(200), unique=False, nullable=False)	
-    date = db.Column(db.String(200), unique=True, nullable=False)	
-    value = db.Column(db.String(200), unique=True, nullable=False)		
+    date = db.Column(db.String(200), unique=False, nullable=False)	
+    value = db.Column(db.String(200), unique=False, nullable=False)		
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
 
 # { date: "2021-07-31", id: 0, value: 65.25, vitalName: "Heart Rate" },

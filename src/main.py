@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Vital, Medication, Symptom, SymptomNote
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
@@ -83,17 +83,62 @@ def post_member():
     }
     return jsonify(response_body), 200
 
+@app.route('/vital', methods=['GET'])
+def get_vitals():
+    vitals = Vital.query.all()
+    all_vitals = list(map(lambda x: x.serialize(), vitals))
+    response_body = {
+        "vitals": all_vitals
+    }
 
-@app.route('/vital', methods=["POST"])
-def add_vital():
-    new_vital = Vital(vital_name=request_body['vital_name'], date=request_body['date'], value=request_body['value'], id=request_body[id], username=request_body['username'])
+    return jsonify(response_body), 200
+
+
+@app.route('/<username>/vital', methods=["POST"])
+def add_vital(username):
+    request_body = request.get_json()
+    new_vital = Vital(vital_name=request_body['vitalName'], date=request_body['date'], value=request_body['value'], username=username)
     db.session.add(new_vital)
     db.session.commit()
+    # vitals = Vital.query.all()
+    # all_vitals = list(map(lambda x: x.serialize(), vitals))
 
     response_body = {
-        "new_vital": new_vital
+        "new_vital": request_body,
+        # "all_vitals": all_vitals
     }
     return jsonify(response_body), 200 
+
+
+@app.route('/medication', methods=['GET'])
+def get_medications():
+    medications = Medication.query.all()
+    all_medications = list(map(lambda x: x.serialize(), medications))
+    response_body = {
+        "medication": all_medications
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/symptom', methods=['GET'])
+def get_symptoms():
+    symptoms = Symptom.query.all()
+    all_symptoms = list(map(lambda x: x.serialize(), symptoms))
+    response_body = {
+        "symptom": all_symptoms
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/symptom_note', methods=['GET'])
+def get_symptom_notes():
+    symptom_notes = SymptomNote.query.all()
+    all_symptom_notes = list(map(lambda x: x.serialize(), symptom_notes))
+    response_body = {
+        "all_symptom_notes": all_symptom_notes
+    }
+
+    return jsonify(response_body), 200
 
     # id = db.Column(db.Integer, primary_key=True)
     # vitalname = db.Column(db.String(200), unique=False, nullable=False)	
