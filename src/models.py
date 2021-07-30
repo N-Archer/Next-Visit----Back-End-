@@ -43,7 +43,7 @@ class Vital(db.Model):
         return {
             "id": self.id,
             "username": self.username,
-            "vital_name": self.vital_name,
+            "vitalName": self.vital_name,
             "date": self.date,
             "value": self.value
             # do not serialize the password, its a security breach

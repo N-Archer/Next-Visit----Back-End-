@@ -92,6 +92,7 @@ def get_vitals():
     }
 
     return jsonify(response_body), 200
+    
 
 
 @app.route('/<username>/vital', methods=["POST"])
@@ -100,14 +101,32 @@ def add_vital(username):
     new_vital = Vital(vital_name=request_body['vitalName'], date=request_body['date'], value=request_body['value'], username=username)
     db.session.add(new_vital)
     db.session.commit()
-    # vitals = Vital.query.all()
-    # all_vitals = list(map(lambda x: x.serialize(), vitals))
+    
+    vitals = Vital.query.filter_by(vital_name=request_body['vitalName'])
+    all_vitals = list(map(lambda x: x.serialize(), vitals))
 
     response_body = {
         "new_vital": request_body,
-        # "all_vitals": all_vitals
+        "all_vitals": all_vitals
     }
-    return jsonify(response_body), 200 
+    return jsonify(all_vitals), 200 
+
+@app.route('/<username>/vital/<int:id>', methods=["DELETE"])
+def delete_vital(username, id):
+    deleted_vital = Vital.query.filter_by(username=username, id=id).first()
+    if deleted_vital is None:
+        raise APIException("Item Not Found", status_code=404)
+    # vital = Vital.query.get(id)
+    db.session.delete(deleted_vital)
+    db.session.commit()
+    
+    vitals = Vital.query.filter_by(vital_name=deleted_vital.vital_name)
+    all_vitals = list(map(lambda x: x.serialize(), vitals))
+
+    response_body = {
+        "all_vitals": all_vitals
+    }
+    return jsonify(all_vitals), 200 
 
 
 @app.route('/medication', methods=['GET'])
@@ -120,6 +139,35 @@ def get_medications():
 
     return jsonify(response_body), 200
 
+@app.route('/<username>/medication', methods=["POST"])
+def add_medication(username):
+    request_body = request.get_json()
+    new_medication = Medication(name=request_body['name'], dose=request_body['dose'], frequency=request_body['frequency'], reason=request_body['reason'], side_effects=request_body['sideEffects'], username=username)
+    db.session.add(new_medication)
+    db.session.commit()
+    
+    medications = Medication.query.filter_by(name=request_body['name'])
+    all_medications = list(map(lambda x: x.serialize(), medications))
+
+    return jsonify(all_medications), 200 
+
+@app.route('/<username>/medication/<int:id>', methods=["DELETE"])
+def delete_medication(username, id):
+    deleted_medication = Medication.query.filter_by(username=username, id=id).first()
+    if deleted_medication is None:
+        raise APIException("Item Not Found", status_code=404)
+    # vital = Vital.query.get(id)
+    db.session.delete(deleted_medication)
+    db.session.commit()
+    
+    medications = Medication.query.filter_by(name=deleted_medication.name)
+    all_medications = list(map(lambda x: x.serialize(), medications))
+
+    response_body = {
+        "all_medications": all_medications
+    }
+    return jsonify(all_medications), 200 
+
 @app.route('/symptom', methods=['GET'])
 def get_symptoms():
     symptoms = Symptom.query.all()
@@ -130,6 +178,35 @@ def get_symptoms():
 
     return jsonify(response_body), 200
 
+@app.route('/<username>/symptom', methods=["POST"])
+def add_symptom(username):
+    request_body = request.get_json()
+    new_symptom = Symptom(symptomName=request_body['symptomName'], startDate=request_body['startDate'], frequency=request_body['frequency'], severity=request_body['severity'], location=request_body['location'], username=username)
+    db.session.add(new_symptom)
+    db.session.commit()
+    
+    symptoms = Symptom.query.filter_by(symptomName=request_body['symptomName'])
+    all_symptoms = list(map(lambda x: x.serialize(), symptoms))
+
+    return jsonify(all_symptoms), 200 
+
+@app.route('/<username>/symptom/<int:id>', methods=["DELETE"])
+def delete_symptom(username, id):
+    deleted_symptom = Symptom.query.filter_by(username=username, id=id).first()
+    if deleted_symptom is None:
+        raise APIException("Item Not Found", status_code=404)
+    # vital = Vital.query.get(id)
+    db.session.delete(deleted_symptom)
+    db.session.commit()
+    
+    symptoms = Symptom.query.filter_by(name=deleted_symptom.symptomName)
+    all_symptoms = list(map(lambda x: x.serialize(), symptoms))
+
+    response_body = {
+        "all_symptoms": all_symptoms
+    }
+    return jsonify(all_symptoms), 200 
+
 @app.route('/symptom_note', methods=['GET'])
 def get_symptom_notes():
     symptom_notes = SymptomNote.query.all()
@@ -139,6 +216,45 @@ def get_symptom_notes():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/<username>/<int:id>/note', methods=["POST"])
+def add_symptom_note(username, id):
+    request_body = request.get_json()
+    new_symptom_note = SymptomNote(symptom_id=id, date=request_body['date'], note=request_body['description'], username=username)
+    db.session.add(new_symptom_note)
+    db.session.commit()
+    
+    symptom_notes = SymptomNote.query.filter_by(symptomName=request_body['symptomName'])
+    all_symptom_notes = list(map(lambda x: x.serialize(), symptoms))
+
+    response_body = {
+        "symptom_note": request_body,
+        "all_symptom_notes": all_symptom_notes
+    }
+
+    return jsonify(all_symptom_notes), 200 
+
+@app.route('/<username>/<int:id>/note', methods=["DELETE"])
+def delete_symptom_note(username, id):
+    deleted_symptom_note = SymptomNote.query.filter_by(username=username, id=id).first()
+    if deleted_symptom_note is None:
+        raise APIException("Item Not Found", status_code=404)
+    db.session.delete(deleted_symptom_note)
+    db.session.commit()
+    
+    symptom_notes = SymptomNote.query.filter_by(id)
+    all_symptom_notes = list(map(lambda x: x.serialize(), symptom_notes))
+
+    response_body = {
+        "all_symptom_notes": all_symptom_notes
+    }
+    return jsonify(all_symptom_notes), 200 
+
+# class SymptomNote(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     date = db.Column(db.String(200), unique=True, nullable=False)	
+#     symptom_id = db.Column(db.Integer, db.ForeignKey('symptom.id'))
+#     note = db.Column(db.String(500), unique=False, nullable=False)	
 
     # id = db.Column(db.Integer, primary_key=True)
     # vitalname = db.Column(db.String(200), unique=False, nullable=False)	
