@@ -52,10 +52,10 @@ class Vital(db.Model):
 class Medication(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)	
-    dose = db.Column(db.String(120), unique=True, nullable=False)	
-    frequency = db.Column(db.String(120), unique=True, nullable=False)		
-    reason = db.Column(db.String(120), unique=True, nullable=False)	
-    side_effects = db.Column(db.String(120), unique=True, nullable=False)	
+    dose = db.Column(db.String(120), unique=False, nullable=False)	
+    frequency = db.Column(db.String(120), unique=False, nullable=False)		
+    reason = db.Column(db.String(120), unique=False, nullable=False)	
+    side_effects = db.Column(db.String(120), unique=False, nullable=False)	
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
 
 # {	id: 1357,	name: "Aspirin",	dose: "a lot",  frequency: "too often", reason: "for fun", sideEffects: "madness and death" },
@@ -77,10 +77,10 @@ class Medication(db.Model):
 class Symptom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     symptomName = db.Column(db.String(120), unique=False, nullable=False)	
-    startDate = db.Column(db.String(200), unique=True, nullable=False)	
-    severity = db.Column(db.Integer, unique=True, nullable=False)		
-    location = db.Column(db.String(60), unique=True, nullable=False)	
-    frequency = db.Column(db.String(120), unique=True, nullable=False)	
+    startDate = db.Column(db.String(200), unique=False, nullable=False)	
+    severity = db.Column(db.Integer, unique=False, nullable=False)		
+    location = db.Column(db.String(60), unique=False, nullable=False)	
+    frequency = db.Column(db.String(120), unique=False, nullable=False)	
     symptom_note = db.relationship('SymptomNote', backref='symptom')
     # vitals = db.relationship('Vital', backref='user')
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
@@ -89,7 +89,7 @@ class Symptom(db.Model):
 
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.symptomName, self.startDate, self.startDate,self.severity, self.location, self.frequency, self.symptom_notes, self.username)
+        return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.symptomName, self.startDate, self.startDate,self.severity, self.location, self.frequency, self.symptom_note, self.username)
 
     def serialize(self):
         return {
@@ -100,12 +100,13 @@ class Symptom(db.Model):
             "severity": self.severity,
             "location": self.location,
             "frequency": self.frequency,
-            "symptom_notes": self.symptom_notes
+            "notes": self.symptom_note
         }
 
 class SymptomNote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(200), unique=True, nullable=False)	
+    date = db.Column(db.String(200), unique=False, nullable=False)	
+    severity = db.Column(db.Integer, unique=False, nullable=False)		
     symptom_id = db.Column(db.Integer, db.ForeignKey('symptom.id'))
     note = db.Column(db.String(500), unique=False, nullable=False)	
 

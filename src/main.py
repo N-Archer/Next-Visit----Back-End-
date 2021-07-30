@@ -181,7 +181,7 @@ def get_symptoms():
 @app.route('/<username>/symptom', methods=["POST"])
 def add_symptom(username):
     request_body = request.get_json()
-    new_symptom = Symptom(symptomName=request_body['symptomName'], startDate=request_body['startDate'], frequency=request_body['frequency'], severity=request_body['severity'], location=request_body['location'], username=username)
+    new_symptom = Symptom(symptomName=request_body['symptomName'], startDate=request_body['startDate'], frequency=request_body['frequency'], severity=request_body['severity'], location=request_body['location'], symptom_note=request_body['notes'], username=username)
     db.session.add(new_symptom)
     db.session.commit()
     
@@ -217,10 +217,10 @@ def get_symptom_notes():
 
     return jsonify(response_body), 200
 
-@app.route('/<username>/<int:id>/note', methods=["POST"])
+@app.route('/<username>/symptom/note', methods=["POST"])
 def add_symptom_note(username, id):
     request_body = request.get_json()
-    new_symptom_note = SymptomNote(symptom_id=id, date=request_body['date'], note=request_body['description'], username=username)
+    new_symptom_note = SymptomNote( date=request_body['date'], note=request_body['description'], username=username)
     db.session.add(new_symptom_note)
     db.session.commit()
     
@@ -234,7 +234,7 @@ def add_symptom_note(username, id):
 
     return jsonify(all_symptom_notes), 200 
 
-@app.route('/<username>/<int:id>/note', methods=["DELETE"])
+@app.route('/<username>/symptom/note/<int:id>', methods=["DELETE"])
 def delete_symptom_note(username, id):
     deleted_symptom_note = SymptomNote.query.filter_by(username=username, id=id).first()
     if deleted_symptom_note is None:
