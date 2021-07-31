@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: bd38504d57d1
+Revision ID: 61ad08e10069
 Revises: 
-Create Date: 2021-07-27 17:35:19.575459
+Create Date: 2021-07-31 20:26:34.049498
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bd38504d57d1'
+revision = '61ad08e10069'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,9 +27,7 @@ def upgrade():
     sa.Column('phone', sa.String(length=200), nullable=False),
     sa.Column('address', sa.String(length=200), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('address'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('fullname'),
     sa.UniqueConstraint('phone'),
     sa.UniqueConstraint('username')
     )
@@ -42,11 +40,7 @@ def upgrade():
     sa.Column('side_effects', sa.String(length=120), nullable=False),
     sa.Column('username', sa.String(length=20), nullable=True),
     sa.ForeignKeyConstraint(['username'], ['user.username'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('dose'),
-    sa.UniqueConstraint('frequency'),
-    sa.UniqueConstraint('reason'),
-    sa.UniqueConstraint('side_effects')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('next_visit',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -64,16 +58,12 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('symptomName', sa.String(length=120), nullable=False),
     sa.Column('startDate', sa.String(length=200), nullable=False),
-    sa.Column('severity', sa.Integer(), nullable=False),
-    sa.Column('location', sa.String(length=60), nullable=False),
-    sa.Column('frequency', sa.String(length=120), nullable=False),
+    sa.Column('severity', sa.Integer(), nullable=True),
+    sa.Column('location', sa.String(length=60), nullable=True),
+    sa.Column('frequency', sa.String(length=120), nullable=True),
     sa.Column('username', sa.String(length=20), nullable=True),
     sa.ForeignKeyConstraint(['username'], ['user.username'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('frequency'),
-    sa.UniqueConstraint('location'),
-    sa.UniqueConstraint('severity'),
-    sa.UniqueConstraint('startDate')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('vital',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -82,18 +72,16 @@ def upgrade():
     sa.Column('value', sa.String(length=200), nullable=False),
     sa.Column('username', sa.String(length=20), nullable=True),
     sa.ForeignKeyConstraint(['username'], ['user.username'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('date'),
-    sa.UniqueConstraint('value')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('symptom_note',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('date', sa.String(length=200), nullable=False),
+    sa.Column('severity', sa.Integer(), nullable=True),
     sa.Column('symptom_id', sa.Integer(), nullable=True),
-    sa.Column('note', sa.String(length=500), nullable=False),
+    sa.Column('note', sa.String(length=500), nullable=True),
     sa.ForeignKeyConstraint(['symptom_id'], ['symptom.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('date')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 
