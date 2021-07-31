@@ -78,9 +78,9 @@ class Symptom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     symptomName = db.Column(db.String(120), unique=False, nullable=False)	
     startDate = db.Column(db.String(200), unique=False, nullable=False)	
-    severity = db.Column(db.Integer, unique=False, nullable=False)		
-    location = db.Column(db.String(60), unique=False, nullable=False)	
-    frequency = db.Column(db.String(120), unique=False, nullable=False)	
+    severity = db.Column(db.Integer, unique=False, nullable=True)		
+    location = db.Column(db.String(60), unique=False, nullable=True)	
+    frequency = db.Column(db.String(120), unique=False, nullable=True)	
     symptom_note = db.relationship('SymptomNote', backref='symptom')
     # vitals = db.relationship('Vital', backref='user')
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
@@ -100,29 +100,28 @@ class Symptom(db.Model):
             "severity": self.severity,
             "location": self.location,
             "frequency": self.frequency,
-            "notes": self.symptom_note
+            "notes": [note.serialize() for note in self.symptom_note]
         }
+
 
 class SymptomNote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(200), unique=False, nullable=False)	
-    severity = db.Column(db.Integer, unique=False, nullable=False)		
+    severity = db.Column(db.Integer, unique=False, nullable=True)		
     symptom_id = db.Column(db.Integer, db.ForeignKey('symptom.id'))
-    note = db.Column(db.String(500), unique=False, nullable=False)	
+    note = db.Column(db.String(500), unique=False, nullable=True)	
 
-# { date: "2021-07-31", id: 0, value: 65.25, vitalName: "Heart Rate" },
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r>' % (self.id,  self.date, self.symptom, self.note,)
+        return '<SymptomNote %r,%r,%r,%r,%r>' % (self.id, self.severity, self.date, self.symptom_id, self.note)
 
     def serialize(self):
         return {
             "id": self.id,
             "date": self.date,
-            "symptom": self.symptom,
-            # "username": self.username,
-            "note": self.note
-            # do not serialize the password, its a security breach
+            "symptom_id": self.symptom_id,
+            "severity": self.severity,
+            "description": self.note
         }
 
 

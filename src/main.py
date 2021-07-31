@@ -146,7 +146,7 @@ def add_medication(username):
     db.session.add(new_medication)
     db.session.commit()
     
-    medications = Medication.query.filter_by(name=request_body['name'])
+    medications = Medication.query.filter_by(username=username)
     all_medications = list(map(lambda x: x.serialize(), medications))
 
     return jsonify(all_medications), 200 
@@ -160,7 +160,7 @@ def delete_medication(username, id):
     db.session.delete(deleted_medication)
     db.session.commit()
     
-    medications = Medication.query.filter_by(name=deleted_medication.name)
+    medications = Medication.query.filter_by(username=username)
     all_medications = list(map(lambda x: x.serialize(), medications))
 
     response_body = {
@@ -176,7 +176,7 @@ def get_symptoms():
         "symptom": all_symptoms
     }
 
-    return jsonify(response_body), 200
+    return jsonify(all_symptoms), 200
 
 @app.route('/<username>/symptom', methods=["POST"])
 def add_symptom(username):
@@ -199,7 +199,7 @@ def delete_symptom(username, id):
     db.session.delete(deleted_symptom)
     db.session.commit()
     
-    symptoms = Symptom.query.filter_by(name=deleted_symptom.symptomName)
+    symptoms = Symptom.query.filter_by(username=username)
     all_symptoms = list(map(lambda x: x.serialize(), symptoms))
 
     response_body = {
@@ -207,48 +207,48 @@ def delete_symptom(username, id):
     }
     return jsonify(all_symptoms), 200 
 
-@app.route('/symptom_note', methods=['GET'])
-def get_symptom_notes():
-    symptom_notes = SymptomNote.query.all()
-    all_symptom_notes = list(map(lambda x: x.serialize(), symptom_notes))
-    response_body = {
-        "all_symptom_notes": all_symptom_notes
-    }
+# @app.route('/symptom_note', methods=['GET'])
+# def get_symptom_notes():
+#     symptom_notes = SymptomNote.query.all()
+#     all_symptom_notes = list(map(lambda x: x.serialize(), symptom_notes))
+#     response_body = {
+#         "all_symptom_notes": all_symptom_notes
+#     }
 
-    return jsonify(response_body), 200
+#     return jsonify(response_body), 200
 
-@app.route('/<username>/symptom/note', methods=["POST"])
+@app.route('/<username>/<int:id>/note', methods=["POST"])
 def add_symptom_note(username, id):
     request_body = request.get_json()
-    new_symptom_note = SymptomNote( date=request_body['date'], note=request_body['description'], username=username)
+    new_symptom_note = SymptomNote( date=request_body['date'], severity=request_body['severity'], note=request_body['description'], symptom_id=id)
     db.session.add(new_symptom_note)
     db.session.commit()
     
-    symptom_notes = SymptomNote.query.filter_by(symptomName=request_body['symptomName'])
-    all_symptom_notes = list(map(lambda x: x.serialize(), symptoms))
+    symptoms = Symptom.query.filter_by(username=username)
+    all_symptoms = list(map(lambda x: x.serialize(), symptoms))
 
-    response_body = {
-        "symptom_note": request_body,
-        "all_symptom_notes": all_symptom_notes
-    }
+    # response_body = {
+    #     "symptom_note": request_body,
+    #     "all_symptoms": all_symptoms
+    # }
 
-    return jsonify(all_symptom_notes), 200 
+    return jsonify(all_symptoms), 200 
 
-@app.route('/<username>/symptom/note/<int:id>', methods=["DELETE"])
-def delete_symptom_note(username, id):
-    deleted_symptom_note = SymptomNote.query.filter_by(username=username, id=id).first()
-    if deleted_symptom_note is None:
-        raise APIException("Item Not Found", status_code=404)
-    db.session.delete(deleted_symptom_note)
-    db.session.commit()
+# @app.route('/<username>/symptom/note/<int:id>', methods=["DELETE"])
+# def delete_symptom_note(username, id):
+#     deleted_symptom_note = SymptomNote.query.filter_by(username=username, id=id).first()
+#     if deleted_symptom_note is None:
+#         raise APIException("Item Not Found", status_code=404)
+#     db.session.delete(deleted_symptom_note)
+#     db.session.commit()
     
-    symptom_notes = SymptomNote.query.filter_by(id)
-    all_symptom_notes = list(map(lambda x: x.serialize(), symptom_notes))
+#     symptom_notes = SymptomNote.query.filter_by()
+#     all_symptom_notes = list(map(lambda x: x.serialize(), symptom_notes))
 
-    response_body = {
-        "all_symptom_notes": all_symptom_notes
-    }
-    return jsonify(all_symptom_notes), 200 
+#     response_body = {
+#         "all_symptom_notes": all_symptom_notes
+#     }
+#     return jsonify(all_symptom_notes), 200 
 
 # class SymptomNote(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
