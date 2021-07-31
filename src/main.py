@@ -185,7 +185,7 @@ def add_symptom(username):
     db.session.add(new_symptom)
     db.session.commit()
     
-    symptoms = Symptom.query.filter_by(username=username])
+    symptoms = Symptom.query.filter_by(username=username)
     all_symptoms = list(map(lambda x: x.serialize(), symptoms))
 
     return jsonify(all_symptoms), 200 
