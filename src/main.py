@@ -97,12 +97,23 @@ def login_user():
     if new_user is None or new_user['username'] is None or new_user['password'] is None:
         raise APIException("Username / pw cannot be empty", status_code=400)
 
-    user = User.query.filter_by(username=new_user['username'],password=new_user['password'] )
-    if user is None:
+    user = User.query.filter_by(username=new_user['username'],password=new_user['password']).first()
+    if not user:
         raise APIException("User does not exits" , status_code=404)
+    data = {}
+    vitals = Vital.query.filter_by(username=new_user['username'])
+    medications = Medication.query.filter_by(username=new_user['username'])
+    symptoms = Symptom.query.filter_by(username=new_user['username'])   
 
-    
-    return jsonify("log in successful" ), 200
+    all_vitals = list(map(lambda x: x.serialize(), vitals))
+    all_medications = list(map(lambda x: x.serialize(), medications))
+    all_symptoms = list(map(lambda x: x.serialize(), symptoms))
+
+    data['vitals']=all_vitals
+    data['medications']=all_medications
+    data['symptoms']=all_symptoms
+
+    return jsonify(data), 200
 
 @app.route('/vital', methods=['GET'])
 def get_vitals():
