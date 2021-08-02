@@ -102,7 +102,7 @@ def add_vital(username):
     db.session.add(new_vital)
     db.session.commit()
     
-    vitals = Vital.query.filter_by(vital_name=request_body['vitalName'])
+    vitals = Vital.query.filter_by(username=username)
     all_vitals = list(map(lambda x: x.serialize(), vitals))
 
     response_body = {
