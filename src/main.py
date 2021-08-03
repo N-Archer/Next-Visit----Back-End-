@@ -101,15 +101,29 @@ def login_user():
     if not user:
         raise APIException("User does not exits" , status_code=404)
     data = {}
-    vitals = Vital.query.filter_by(username=new_user['username'])
+
+    heart_rate = Vital.query.filter_by(username=new_user['username'],vital_name="Heart Rate")
+    weight = Vital.query.filter_by(username=new_user['username'],vital_name="Weight")
+    height = Vital.query.filter_by(username=new_user['username'],vital_name='Height')
+    blood_pressure = Vital.query.filter_by(username=new_user['username'],vital_name='Blood Pressure')
     medications = Medication.query.filter_by(username=new_user['username'])
     symptoms = Symptom.query.filter_by(username=new_user['username'])   
 
-    all_vitals = list(map(lambda x: x.serialize(), vitals))
+    # all_vitals = list(map(lambda x: x.serialize(), vitals))
     all_medications = list(map(lambda x: x.serialize(), medications))
     all_symptoms = list(map(lambda x: x.serialize(), symptoms))
+    weight = list(map(lambda x: x.serialize(), weight))
+    height = list(map(lambda x: x.serialize(), height))
+    blood_pressure = list(map(lambda x: x.serialize(), blood_pressure))
+    heart_rate = list(map(lambda x: x.serialize(), heart_rate))
 
-    data['vitals']=all_vitals
+    data['vitals']={
+        "heart_rate": heart_rate,
+        "weight": weight,
+        "height": height,
+        "blood_pressure": blood_pressure,
+    }
+
     data['medications']=all_medications
     data['symptoms']=all_symptoms
 
