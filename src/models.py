@@ -7,9 +7,9 @@ class User(db.Model):
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    fullname = db.Column(db.String(120), unique=True, nullable=False)
+    fullname = db.Column(db.String(120), unique=False, nullable=False)
     phone = db.Column(db.String(200), unique=True, nullable=False)
-    address =  db.Column(db.String(200), unique=True, nullable=False)
+    address =  db.Column(db.String(200), unique=False, nullable=False)
     vitals = db.relationship('Vital', backref='user')
 
     def __repr__(self):
@@ -124,32 +124,60 @@ class SymptomNote(db.Model):
             "description": self.note
         }
 
-
-
-
-class NextVisit(db.Model):
+class AllDoctors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(200), unique=True, nullable=False)	
-    time = db.Column(db.String(200), unique=True, nullable=False)	
-    doctorName = db.Column(db.String(200), unique=True, nullable=False)
-    # symptoms = db.relationship('symptomnote', backref='symptom')
-    # meds = db.relationship('symptomnote', backref='symptom')
-    # vitals = db.relationship('symptomnote', backref='symptom')
-    username = db.Column(db.String(20), db.ForeignKey('user.username'))
+    name = db.Column(db.String(200), unique=True, nullable=False)	
+    specialty = db.Column(db.String(200), unique=False, nullable=False)	
 
-# id: store.allVisits.length, doctor: doctorName, date: date, time: time, symptoms: sympList, meds: medList, vitals: vitalList
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.date, self.time, self.doctorName,self.symptoms, self.meds, self.vitals, self.username)
+        return '<AllDoctors %r,%r,%r>' % (self.id, self.name, self.specialty)
 
     def serialize(self):
         return {
             "id": self.id,
-            "date": self.date,
-            "time": self.time,
-            "doctorName": self.doctorName,
-            "symptoms": self.symptoms,
-            "meds": self.meds,
-            "vitals": self.vitals,
-            "username": self.username
+            "name": self.name,
+            "specialty": self.specialty
         }
+
+
+# class NextVisit(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     symptomName = 
+#     symptoms = 
+#     meds = 
+#     vitals = 
+
+				# 	symptoms: [
+				# 		{
+				# 			id: 123124,
+				# 			symptomName: "broken butt",
+				# 			startDate: "07/12/21",
+				# 			severity: "10",
+				# 			location: "butt",
+				# 			frequency: "constant",
+				# 			duration: "all day",
+				# 			notes: [{ date: "08/02/2021", description: "Getting better" }]
+				# 		}
+				# 	],
+				# 	meds: [],
+				# 	vitals: []
+				# }
+
+# id: store.allVisits.length, doctor: doctorName, date: date, time: time, symptoms: sympList, meds: medList, vitals: vitalList
+
+    # def __repr__(self):
+    #     return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.date, self.time, self.doctorName,self.symptoms, self.meds, self.vitals, self.username)
+
+    # def serialize(self):
+    #     return {
+    #         "id": self.id,
+    #         "date": self.date,
+    #         "time": self.time,
+    #         "doctorName": self.doctorName,
+    #         "symptoms": self.symptoms,
+    #         "meds": self.meds,
+    #         "vitals": self.vitals,
+    #         "username": self.username
+    #     }
+
