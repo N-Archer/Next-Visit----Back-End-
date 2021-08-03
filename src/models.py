@@ -56,7 +56,7 @@ class Medication(db.Model):
     frequency = db.Column(db.String(120), unique=False, nullable=False)		
     reason = db.Column(db.String(120), unique=False, nullable=False)	
     side_effects = db.Column(db.String(120), unique=False, nullable=False)	
-    username = db.Column(db.String(20), db.ForeignKey('user.username'))
+    # username = db.Column(db.String(20), db.ForeignKey('user.username'))
 
 # {	id: 1357,	name: "Aspirin",	dose: "a lot",  frequency: "too often", reason: "for fun", sideEffects: "madness and death" },
 
@@ -66,7 +66,7 @@ class Medication(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "username": self.username,
+            # "username": self.username,
             "name": self.name,
             "dose": self.dose,
             "frequency": self.frequency,

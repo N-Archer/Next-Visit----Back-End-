@@ -142,11 +142,11 @@ def get_medications():
 @app.route('/<username>/medication', methods=["POST"])
 def add_medication(username):
     request_body = request.get_json()
-    new_medication = Medication(name=request_body['name'], dose=request_body['dose'], frequency=request_body['frequency'], reason=request_body['reason'], side_effects=request_body['sideEffects'], username=username)
+    new_medication = Medication(name=request_body['name'], dose=request_body['dose'], frequency=request_body['frequency'], reason=request_body['reason'], side_effects=request_body['sideEffects'])
     db.session.add(new_medication)
     db.session.commit()
     
-    medications = Medication.query.filter_by(username=username)
+    medications = Medication.query.all()
     all_medications = list(map(lambda x: x.serialize(), medications))
 
     return jsonify(all_medications), 200 
