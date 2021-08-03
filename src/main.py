@@ -106,7 +106,7 @@ def login_user():
     weight = Vital.query.filter_by(username=new_user['username'],vital_name="Weight")
     height = Vital.query.filter_by(username=new_user['username'],vital_name='Height')
     blood_pressure = Vital.query.filter_by(username=new_user['username'],vital_name='Blood Pressure')
-    medications = Medication.query.filter_by(username=new_user['username'])
+    medications = Medication.query.all()
     symptoms = Symptom.query.filter_by(username=new_user['username'])   
 
     # all_vitals = list(map(lambda x: x.serialize(), vitals))
@@ -148,7 +148,7 @@ def add_vital(username):
     db.session.add(new_vital)
     db.session.commit()
     
-    vitals = Vital.query.filter_by(username=username)
+    vitals = Vital.query.filter_by(username=username, vital_name=request_body['vitalName'])
     all_vitals = list(map(lambda x: x.serialize(), vitals))
 
     response_body = {
@@ -199,7 +199,7 @@ def add_medication(username):
 
 @app.route('/<username>/medication/<int:id>', methods=["DELETE"])
 def delete_medication(username, id):
-    deleted_medication = Medication.query.filter_by(username=username, id=id).first()
+    deleted_medication = Medication.query.filter_by(id=id).first()
     if deleted_medication is None:
         raise APIException("Item Not Found", status_code=404)
     # vital = Vital.query.get(id)
