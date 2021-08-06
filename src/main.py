@@ -99,7 +99,7 @@ def login_user():
 
     user = User.query.filter_by(username=new_user['username'],password=new_user['password']).first()
     if not user:
-        raise APIException("User does not exits" , status_code=404)
+        raise APIException("User does not exist" , status_code=404)
     data = {}
 
     heart_rate = Vital.query.filter_by(username=new_user['username'],vital_name="Heart Rate")
