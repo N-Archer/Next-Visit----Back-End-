@@ -37,7 +37,7 @@ class Vital(db.Model):
 # { date: "2021-07-31", id: 0, value: 65.25, vitalName: "Heart Rate" },
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r>' % (self.id, self.vital_name, self.date, self.value, self.username)
+        return '<Vital %r,%r,%r,%r,%r>' % (self.id, self.vital_name, self.date, self.value, self.username)
 
     def serialize(self):
         return {
@@ -61,7 +61,7 @@ class Medication(db.Model):
 # {	id: 1357,	name: "Aspirin",	dose: "a lot",  frequency: "too often", reason: "for fun", sideEffects: "madness and death" },
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r,%r,%r>' % (self.id, self.username, self.name, self.dose, self.frequency, self.reason, self.side_effects)
+        return '<Medication %r,%r,%r,%r,%r,%r,%r>' % (self.id, self.username, self.name, self.dose, self.frequency, self.reason, self.side_effects)
 
     def serialize(self):
         return {
@@ -82,6 +82,7 @@ class Symptom(db.Model):
     location = db.Column(db.String(60), unique=False, nullable=True)	
     frequency = db.Column(db.String(120), unique=False, nullable=True)	
     symptom_note = db.relationship('SymptomNote', backref='symptom')
+    duration = db.Column(db.String(120), unique=False, nullable=True)
     # vitals = db.relationship('Vital', backref='user')
     username = db.Column(db.String(20), db.ForeignKey('user.username'))
 
@@ -89,7 +90,7 @@ class Symptom(db.Model):
 
 
     def __repr__(self):
-        return '<Favorite %r,%r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.symptomName, self.startDate, self.startDate,self.severity, self.location, self.frequency, self.symptom_note, self.username)
+        return '<Symptom %r,%r,%r,%r,%r,%r,%r,%r,%r>' % (self.id, self.symptomName, self.startDate, self.startDate,self.severity, self.location, self.frequency, self.symptom_note, self.username)
 
     def serialize(self):
         return {
@@ -100,6 +101,7 @@ class Symptom(db.Model):
             "severity": self.severity,
             "location": self.location,
             "frequency": self.frequency,
+            "duration": self.duration,
             "notes": [note.serialize() for note in self.symptom_note]
         }
 

@@ -227,7 +227,7 @@ def get_symptoms():
 @app.route('/<username>/symptom', methods=["POST"])
 def add_symptom(username):
     request_body = request.get_json()
-    new_symptom = Symptom(symptomName=request_body['symptomName'], startDate=request_body['startDate'], frequency=request_body['frequency'], severity=request_body['severity'], location=request_body['location'], symptom_note=request_body['notes'], username=username)
+    new_symptom = Symptom(symptomName=request_body['symptomName'], startDate=request_body['startDate'], frequency=request_body['frequency'], severity=request_body['severity'], location=request_body['location'], symptom_note=request_body['notes'], duration=request_body['duration'], username=username)
     db.session.add(new_symptom)
     db.session.commit()
     
